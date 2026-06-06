@@ -164,6 +164,7 @@ namespace LibSTF
                 if (match)
                     count++;
             }
+            return count;
         }
         
         static void WriteInt(FileStream stream, int value)
