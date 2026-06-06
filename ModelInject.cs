@@ -144,7 +144,39 @@ namespace LibSTF
             return addr;
         }
 
+        static short GetPolygonCount(byte[] dataMdl){
+            byte[] pattern = { 0x01, 0x04, 0x04, 0x00 };
+            int count = 0;
+            
+            for (int i = 0; i <= dataMdl.Length - pattern.Length; i += 4)
+            {
+                bool match = true;
+            
+                for (int j = 0; j < pattern.Length; j++)
+                {
+                    if (dataMdl[i + j] != pattern[j])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+            
+                if (match)
+                    count++;
+            }
+        }
+        
         static void WriteInt(FileStream stream, int value)
+        {
+            byte[] bytes = BitConverter.GetBytes(value);
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+            stream.Write(bytes, 0, bytes.Length);
+        }
+
+        static void WriteShort(FileStream stream, short value)
         {
             byte[] bytes = BitConverter.GetBytes(value);
             if (!BitConverter.IsLittleEndian)
@@ -332,6 +364,8 @@ namespace LibSTF
                             WriteInt(f_Data, GetTexAddr(addrUvs)); // write tex points offset
                             WriteInt(f_Data, GetTexAddr(addrMat)); // write tex header offset
                             WriteInt(f_Data, GetPolAddr(addrMdl)); // write poly offset
+                            WriteShort(f_Data, GetPolygonCount(dataMdl)); // write polygon count and unused short
+                            WriteShort(f_Data, GetPolygonCount(dataMdl)); // write polygon count and unused short
                         }
 
                         VerboseLog($"    Done! Size of pol data: 0x{sizePol:X4} Size of tex data: 0x{sizeTex:X4}");
