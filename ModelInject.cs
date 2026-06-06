@@ -146,7 +146,7 @@ namespace LibSTF
 
         static short GetPolygonCount(byte[] dataMdl){
             byte[] pattern = { 0x01, 0x04, 0x04, 0x00 };
-            int count = 0;
+            short count = 0;
             
             for (int i = 0; i <= dataMdl.Length - pattern.Length; i += 4)
             {
